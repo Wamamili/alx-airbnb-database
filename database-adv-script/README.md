@@ -32,6 +32,28 @@ This task focuses on mastering SQL joins by writing queries that combine multipl
 - `subqueries.sql`: Contains the SQL scripts for non-correlated and correlated subqueries.
 - `README.md`: Documentation for Task 1.
 
+
+
+## Apply Aggregations and Window Functions
+
+This task focuses on analyzing data with SQL aggregation functions and window functions.
+
+## Queries Implemented
+
+1. **Aggregation with GROUP BY**
+   - Retrieves the total number of bookings made by each user.
+   - Uses the `COUNT` function and `GROUP BY` clause.
+   - Includes users with zero bookings by using a `LEFT JOIN`.
+
+2. **Window Function with RANK**
+   - Ranks properties based on the total number of bookings received.
+   - Uses `RANK() OVER (ORDER BY COUNT(b.booking_id) DESC)`.
+   - Provides a ranking where properties with the same number of bookings share the same rank.
+
+## Files
+- `aggregations_and_window_functions.sql`: Contains SQL scripts for aggregation and window function queries.
+- `README.md`: Documentation for Task 2.
+
 ## Repository
 [alx-airbnb-database](https://github.com/your-username/alx-airbnb-database)
 
