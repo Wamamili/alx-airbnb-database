@@ -1,46 +1,32 @@
 Implementing Indexes for Optimization
 
--- Index creation for optimization
+This task focuses on improving query performance through indexing.
 
--- 1. Index on Users table for frequent lookups by email and id
-CREATE INDEX idx_users_email ON Users(email);
-CREATE INDEX idx_users_id ON Users(id);
+## Identified High-Usage Columns
+- **Users Table**
+  - `email` is frequently used in login or search queries.
+- **Bookings Table**
+  - `user_id` is used in joins with Users.
+  - `start_date` is used in date-range filters.
+  - `(property_id, start_date)` often appears together in filtering and reporting.
+- **Properties Table**
+  - `location` is commonly used in searches.
 
--- 2. Index on Bookings table for joins and searches
-CREATE INDEX idx_bookings_userid ON Bookings(user_id);
-CREATE INDEX idx_bookings_propertyid ON Bookings(property_id);
-CREATE INDEX idx_bookings_date ON Bookings(booking_date);
+## Indexes Created
+- `idx_users_email`
+- `idx_bookings_user_id`
+- `idx_bookings_start_date`
+- `idx_properties_location`
+- `idx_bookings_property_date` (composite index)
 
--- 3. Index on Properties table for filtering and joins
-CREATE INDEX idx_properties_location ON Properties(location);
-CREATE INDEX idx_properties_id ON Properties(id);
+All indexes are defined in `database_index.sql`.
 
--- Measure performance BEFORE indexes
--- Example query to analyze
-EXPLAIN ANALYZE
-SELECT u.id, u.name, b.id, b.booking_date
-FROM Users u
-JOIN Bookings b ON u.id = b.user_id
-WHERE u.email = 'test@example.com';
+## Measuring Performance
+Queries were tested before and after indexing using `EXPLAIN` (or `ANALYZE`).
 
-EXPLAIN ANALYZE
-SELECT p.id, p.title, COUNT(b.id) as total_bookings
-FROM Properties p
-LEFT JOIN Bookings b ON p.id = b.property_id
-GROUP BY p.id, p.title
-ORDER BY total_bookings DESC;
-
--- After indexes are created, re-run EXPLAIN ANALYZE
--- PostgreSQL will automatically use indexes where beneficial
-EXPLAIN ANALYZE
-SELECT u.id, u.name, b.id, b.booking_date
-FROM Users u
-JOIN Bookings b ON u.id = b.user_id
-WHERE u.email = 'test@example.com';
-
-EXPLAIN ANALYZE
-SELECT p.id, p.title, COUNT(b.id) as total_bookings
-FROM Properties p
-LEFT JOIN Bookings b ON p.id = b.property_id
-GROUP BY p.id, p.title
-ORDER BY total_bookings DESC;
+### Example 1: Total bookings by user
+```sql
+EXPLAIN SELECT u.user_id, COUNT(b.booking_id)
+FROM users u
+JOIN bookings b ON u.user_id = b.user_id
+GROUP BY u.user_id;

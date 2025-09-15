@@ -1,14 +1,44 @@
--- 3.1 Create index on Users table for frequent lookups by email
-CREATE INDEX idx_users_email ON users(email);
+-- Index creation for optimization
 
--- 3.2 Create index on Bookings table for joins and filtering by user_id
-CREATE INDEX idx_bookings_user_id ON bookings(user_id);
+-- 1. Index on Users table for frequent lookups by email and id
+CREATE INDEX idx_users_email ON Users(email);
+CREATE INDEX idx_users_id ON Users(id);
 
--- 3.3 Create index on Bookings table for date-based queries
-CREATE INDEX idx_bookings_start_date ON bookings(start_date);
+-- 2. Index on Bookings table for joins and searches
+CREATE INDEX idx_bookings_userid ON Bookings(user_id);
+CREATE INDEX idx_bookings_propertyid ON Bookings(property_id);
+CREATE INDEX idx_bookings_date ON Bookings(booking_date);
 
--- 3.4 Create index on Properties table for joins and filtering
-CREATE INDEX idx_properties_location ON properties(location);
+-- 3. Index on Properties table for filtering and joins
+CREATE INDEX idx_properties_location ON Properties(location);
+CREATE INDEX idx_properties_id ON Properties(id);
 
--- 3.5 Composite index on Bookings for queries involving property_id and start_date
-CREATE INDEX idx_bookings_property_date ON bookings(property_id, start_date);
+-- Measure performance BEFORE indexes
+-- Example query to analyze
+EXPLAIN ANALYZE
+SELECT u.id, u.name, b.id, b.booking_date
+FROM Users u
+JOIN Bookings b ON u.id = b.user_id
+WHERE u.email = 'test@example.com';
+
+EXPLAIN ANALYZE
+SELECT p.id, p.title, COUNT(b.id) as total_bookings
+FROM Properties p
+LEFT JOIN Bookings b ON p.id = b.property_id
+GROUP BY p.id, p.title
+ORDER BY total_bookings DESC;
+
+-- After indexes are created, re-run EXPLAIN ANALYZE
+-- PostgreSQL will automatically use indexes where beneficial
+EXPLAIN ANALYZE
+SELECT u.id, u.name, b.id, b.booking_date
+FROM Users u
+JOIN Bookings b ON u.id = b.user_id
+WHERE u.email = 'test@example.com';
+
+EXPLAIN ANALYZE
+SELECT p.id, p.title, COUNT(b.id) as total_bookings
+FROM Properties p
+LEFT JOIN Bookings b ON p.id = b.property_id
+GROUP BY p.id, p.title
+ORDER BY total_bookings DESC;
