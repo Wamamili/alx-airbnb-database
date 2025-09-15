@@ -17,7 +17,10 @@ SELECT b.id AS booking_id,
 FROM Bookings b
 JOIN Users u ON b.user_id = u.id
 JOIN Properties p ON b.property_id = p.id
-JOIN Payments pay ON b.id = pay.booking_id;
+JOIN Payments pay ON b.id = pay.booking_id
+WHERE b.start_date >= '2025-01-01'
+  AND b.end_date <= '2025-12-31'
+  AND pay.status = 'Completed';
 
 -- Optimized query
 -- Refactored to avoid unnecessary columns and reduce join cost
@@ -31,4 +34,7 @@ SELECT b.id AS booking_id,
 FROM Bookings b
 JOIN Users u ON b.user_id = u.id
 JOIN Properties p ON b.property_id = p.id
-LEFT JOIN Payments pay ON b.id = pay.booking_id;
+LEFT JOIN Payments pay ON b.id = pay.booking_id
+WHERE b.start_date >= '2025-01-01'
+  AND b.end_date <= '2025-12-31'
+  AND (pay.status = 'Completed' OR pay.status IS NULL);
