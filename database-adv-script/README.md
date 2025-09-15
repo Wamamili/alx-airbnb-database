@@ -18,6 +18,20 @@ This task focuses on mastering SQL joins by writing queries that combine multipl
 - `joins_queries.sql`: Contains the SQL scripts for INNER JOIN, LEFT JOIN, and FULL OUTER JOIN queries.
 - `README.md`: Documentation for Task 0.
 
+## Queries Implemented
+
+1. **Non-Correlated Subquery**
+   - Retrieves all properties where the average rating is greater than 4.0.
+   - The subquery calculates the average rating for each property and filters properties with an average above 4.0.
+
+2. **Correlated Subquery**
+   - Retrieves all users who have made more than 3 bookings.
+   - The subquery runs once for each user, counting the number of bookings linked to that user.
+
+## Files
+- `subqueries.sql`: Contains the SQL scripts for non-correlated and correlated subqueries.
+- `README.md`: Documentation for Task 1.
+
 ## Repository
 [alx-airbnb-database](https://github.com/your-username/alx-airbnb-database)
 
